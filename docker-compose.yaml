@@ -1,0 +1,93 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=dev1234
+      - POSTGRES_USER=postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - db:/var/lib/postgresql/data
+    networks:
+      - todoinfra
+  elasticsearch:
+   container_name: elasticsearch
+   image: docker.elastic.co/elasticsearch/elasticsearch:7.9.2
+   ports:
+    - 9200:9200
+   volumes:
+    - elasticsearch-data:/usr/share/elasticsearch/data
+   environment:
+    - xpack.monitoring.enabled=true
+    - xpack.watcher.enabled=false
+    - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    - discovery.type=single-node
+   networks:
+    - todoinfra
+  kibana:
+   container_name: kibana
+   image: docker.elastic.co/kibana/kibana:7.9.2
+   ports:
+    - 5601:5601
+   depends_on:
+    - elasticsearch
+   environment:
+    - ELASTICSEARCH_URL=http://localhost:9200
+   networks:
+    - todoinfra
+  identity-svc:
+    container_name: identity-svc
+    build:
+      context: .
+      dockerfile: ./Identity.Dockerfile
+    environment: 
+      - ASPNETCORE_URLS=http://0.0.0.0:5000
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - DB_CONNECTION_STRING=Server=localhost:5432;User Id=postgres;Password=dev1234;Database=identityserver
+    ports: 
+      - "5000:5000"
+    networks:
+      - todoinfra
+    depends_on: 
+      - postgres
+  todo-svc:
+    container_name: todo-service
+    build:
+      context: .
+      dockerfile: ./TodoList.Dockerfile
+    environment: 
+      - ASPNETCORE_URLS=http://0.0.0.0:7001
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - DB_CONNECTION_STRING=Server=localhost:5432;User Id=postgres;Password=dev1234;Database=todolist
+    ports: 
+      - "7001:7001"
+    networks:
+      - todoinfra
+    depends_on: 
+      - postgres
+      - identity-svc
+  gateway-svc:
+    container_name: gateway-service
+    build:
+      context: .
+      dockerfile: ./Dockerfile-gateway
+    environment: 
+      - ASPNETCORE_URLS=http://0.0.0.0:6000
+      - ASPNETCORE_ENVIRONMENT=Docker
+    ports: 
+      - "6000:6000"
+    networks:
+      - todoinfra
+    depends_on: 
+      - postgres
+      - identity-svc
+      - todo-svc
+networks:
+  todoinfra:
+    driver: bridge
+
+volumes:
+  elasticsearch-data:
+  db:

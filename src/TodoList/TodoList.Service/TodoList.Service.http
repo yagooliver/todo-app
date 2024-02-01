@@ -1,0 +1,37 @@
+@TodoList.Service_HostAddress = http://localhost:7001
+
+GET http://localhost:7001/api/item
+Accept: application/json
+
+###
+GET http://localhost:7001/api/item/b8c90223-16d4-410c-82a5-84335788908d
+Accept: application/json
+
+###
+### POST
+
+POST http://localhost:7001/api/item
+content-type: application/json
+
+{
+  "Name": "New Task 2",
+  "Description": "New item 2",
+  "StatusId":  1,
+  "comments": "",
+  "showAlerts": false,
+  "endDate": "2024-03-30T12:56:41.360Z"
+}
+
+### PUT  
+PUT http://localhost:7001/api/item/b8c90223-16d4-410c-82a5-84335788908d
+content-type: application/json
+
+{
+  "Id": "b8c90223-16d4-410c-82a5-84335788908d",
+  "Name": "Changing status task",
+  "Description": "Changing status description",
+  "StatusId":  3,
+  "comments": "Set to Done",
+  "showAlerts": false,
+  "endDate": "2024-03-30T12:56:41.360Z"
+}

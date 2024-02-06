@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: identity-svc
+spec:
+  selector:
+    matchLabels:
+      app: identity-svc
+  template:
+    metadata:
+      labels:
+        app: identity-svc
+    spec:
+      containers:
+      - name: identity-svc
+        image: yagooliverce/identity-svc
+        imagePullPolicy: Always
+        env:
+          - name: ASPNETCORE_URLS
+            value: http://0.0.0.0:80
+          - name: ASPNETCORE_ENVIRONMENT
+            value: Docker
+          - name: IdentityServiceUrl
+            value: http://identity-svc
+          - name: ElasticConfiguration__Uri
+            value: http://elasticsearch:9200
+          - name: ConnectionStrings__TodoList
+            value: Server=postgres-db,5432;User Id=postgres;Password=dev1234;Database=todolist
+          - name: ClientSecret
+            value: secret
+          - name: ClientId
+            value: todoApp
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: identity-clusterip
+spec:
+  type: ClusterIP
+  selector:
+    app: identity-svc
+  ports:
+  - port: 80
+    targetPort: 80

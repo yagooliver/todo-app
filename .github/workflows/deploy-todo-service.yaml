@@ -8,7 +8,7 @@ on:
 env:
   REGISTRY_IMAGE: yagooliverce/todo-service
   DOCKERFILE: ./TodoList.Dockerfile
-  DEPLOYMENT_NAME: todo-service
+  DEPLOYMENT_NAME: todo-service deploy
   USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
   PASSWORD: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 

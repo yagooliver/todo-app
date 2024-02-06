@@ -8,7 +8,7 @@ on:
 env:
   REGISTRY_IMAGE: yagooliverce/identity-svc
   DOCKERFILE: ./Identity.Dockerfile
-  DEPLOYMENT_NAME: todo-service
+  DEPLOYMENT_NAME: identity-svc
   USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
   PASSWORD: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 

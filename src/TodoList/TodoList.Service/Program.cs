@@ -1,4 +1,6 @@
 using System.Reflection;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
@@ -13,16 +15,19 @@ using TodoList.Service.Extensions;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllers();
+
+Console.WriteLine(builder.Environment.EnvironmentName);
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
-    .AddJsonFile($"appsettings.json")
-    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json")
+    .AddJsonFile($"appsettings.json", false, true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json",false,true)
     .AddEnvironmentVariables();
+
 SerilogSettingsConfig.ConfigureLogging(builder.Configuration, builder.Environment.EnvironmentName);
 
 builder.Services.AddDbContext<TodoListDbContext>(opt =>
 {
-    opt.UseNpgsql(builder.Configuration.GetConnectionString("TodoListConnectionStrings"));
+    opt.UseNpgsql(builder.Configuration["ConnectionStrings:TodoList"]);
 });
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

@@ -16,45 +16,45 @@ internal static class HostingExtensions
         builder.Services.AddRazorPages();
 
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseNpgsql(builder.Configuration.GetConnectionString("IdentityProviderConnectionStrings")));
+            options.UseNpgsql(builder.Configuration["ConnectionStrings:IdentityProvider"]));
 
-            builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
+        builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
 
-            builder.Services
-                .AddIdentityServer(options =>
-                {
-                    options.Events.RaiseErrorEvents = true;
-                    options.Events.RaiseInformationEvents = true;
-                    options.Events.RaiseFailureEvents = true;
-                    options.Events.RaiseSuccessEvents = true;
-                    
-                    if (builder.Environment.IsEnvironment("Docker"))
-                    {
-                        options.IssuerUri = "identity-svc";
-                    }
-
-                    if (builder.Environment.IsProduction())
-                    {
-                        options.IssuerUri = "https://id.trycatchlearn.com";
-                    }
-
-                    // see https://docs.duendesoftware.com/identityserver/v6/fundamentals/resources/
-                    //options.EmitStaticAudienceClaim = true;
-                })
-                .AddInMemoryIdentityResources(Config.IdentityResources)
-                .AddInMemoryApiScopes(Config.ApiScopes)
-                .AddInMemoryClients(Config.Clients(builder.Configuration))
-                .AddAspNetIdentity<ApplicationUser>()
-                .AddProfileService<CustomProfileService>();
-
-            builder.Services.ConfigureApplicationCookie(options =>
+        builder.Services
+            .AddIdentityServer(options =>
             {
-                options.Cookie.SameSite = SameSiteMode.Lax;
-            });
+                options.Events.RaiseErrorEvents = true;
+                options.Events.RaiseInformationEvents = true;
+                options.Events.RaiseFailureEvents = true;
+                options.Events.RaiseSuccessEvents = true;
+                
+                if (builder.Environment.IsEnvironment("Docker"))
+                {
+                    options.IssuerUri = "identity-svc";
+                }
 
-            builder.Services.AddAuthentication();
+                if (builder.Environment.IsProduction())
+                {
+                    options.IssuerUri = "https://id.trycatchlearn.com";
+                }
+
+                // see https://docs.duendesoftware.com/identityserver/v6/fundamentals/resources/
+                //options.EmitStaticAudienceClaim = true;
+            })
+            .AddInMemoryIdentityResources(Config.IdentityResources)
+            .AddInMemoryApiScopes(Config.ApiScopes)
+            .AddInMemoryClients(Config.Clients(builder.Configuration))
+            .AddAspNetIdentity<ApplicationUser>()
+            .AddProfileService<CustomProfileService>();
+
+        builder.Services.ConfigureApplicationCookie(options =>
+        {
+            options.Cookie.SameSite = SameSiteMode.Lax;
+        });
+
+        builder.Services.AddAuthentication();
         builder.Host.UseSerilog();
         return builder.Build();
     }

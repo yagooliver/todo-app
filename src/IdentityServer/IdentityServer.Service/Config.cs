@@ -22,12 +22,12 @@ public static class Config
         {
             new Client
             {
-                ClientId = "todoApp",
+                ClientId = config["ClientId"],
                 ClientName = "todoApp",
                 ClientSecrets = {new Secret(config["ClientSecret"].Sha256())},
                 AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
                 RequirePkce = false,
-                RedirectUris = {"http://localhost:5000" + "/api/auth/callback/id-server"},
+                RedirectUris = {config["CallBack"] + "/api/auth/callback/id-server"},
                 AllowOfflineAccess = true,
                 AllowedScopes = {"todoApp", "openid", "profile"},
                 AccessTokenLifetime = 360,

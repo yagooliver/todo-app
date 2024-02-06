@@ -47,24 +47,5 @@ namespace TodoList.Service
             byte[] bytes = Encoding.UTF8.GetBytes(input);
             return Convert.ToBase64String(sHA.ComputeHash(bytes));
         }
-
-        public static string GetDisplayName(this ClaimsPrincipal principal)
-        {
-            string name = principal?.Identity?.Name;
-            if (!string.IsNullOrEmpty(name))
-            {
-                return name;
-            }
-
-            Claim claim = principal?.FindFirst("id");
-            if (claim != null)
-            {
-                return claim.Value;
-            }
-
-            return string.Empty;
-        }
     }
-
-    
 }

@@ -14,16 +14,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile($"appsettings.json")
-    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json")
-    .AddEnvironmentVariables();
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json").AddEnvironmentVariables();
 SerilogSettingsConfig.ConfigureLogging(builder.Configuration, builder.Environment.EnvironmentName);
 
-//builder.Services.AddDbContext<ApplicationDbContext>(opt =>
-//{
-//    opt.UseNpgsql(builder.Configuration.GetConnectionString("IdentityProviderConnectionStrings"));
-//});
-//builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-//    .AddEntityFrameworkStores<ApplicationDbContext>();
+Console.WriteLine(builder.Environment.EnvironmentName);
+Console.WriteLine(builder.Configuration.GetConnectionString("IdentityProviderConnectionStrings"));
 
 var app = builder
         .ConfigureServices()

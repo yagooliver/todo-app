@@ -16,7 +16,7 @@ internal static class HostingExtensions
         builder.Services.AddRazorPages();
 
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseNpgsql(builder.Configuration["ConnectionStrings:IdentityProvider"]));
+            options.UseNpgsql(builder.Configuration["ConnectionStrings:IdentityProvider"],options => options.EnableRetryOnFailure(5, TimeSpan.FromSeconds(30),null)));
 
         builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -33,11 +33,6 @@ internal static class HostingExtensions
                 if (builder.Environment.IsEnvironment("Docker"))
                 {
                     options.IssuerUri = "identity-svc";
-                }
-
-                if (builder.Environment.IsProduction())
-                {
-                    options.IssuerUri = "https://id.trycatchlearn.com";
                 }
 
                 // see https://docs.duendesoftware.com/identityserver/v6/fundamentals/resources/

@@ -27,7 +27,7 @@ SerilogSettingsConfig.ConfigureLogging(builder.Configuration, builder.Environmen
 
 builder.Services.AddDbContext<TodoListDbContext>(opt =>
 {
-    opt.UseNpgsql(builder.Configuration["ConnectionStrings:TodoList"]);
+    opt.UseNpgsql(builder.Configuration["ConnectionStrings:TodoList"], options => options.EnableRetryOnFailure(5, TimeSpan.FromSeconds(30),null));
 });
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

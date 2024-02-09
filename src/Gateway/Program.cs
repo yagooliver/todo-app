@@ -19,7 +19,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.Authority = builder.Configuration["IdentityServiceUrl"];
         options.RequireHttpsMetadata = false;
         options.TokenValidationParameters.ValidateAudience = false;
-        options.TokenValidationParameters.NameClaimType = "username";
+        options.TokenValidationParameters.NameClaimType = "sub";
+        options.SaveToken = true;
+        options.Events = new JwtBearerEvents
+        {
+            OnTokenValidated = context =>
+            {
+                // Log the token
+                Log.Information($"Received Token: {context.SecurityToken}");
+
+                return Task.CompletedTask;
+            }
+        };
+        options.TokenValidationParameters.ValidTypes = new[] { "at+jwt" };
     });
 
 builder.Host.UseSerilog();

@@ -9,13 +9,11 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - db:/var/lib/postgresql/data
+      - db-post:/var/lib/postgresql/data
     # networks:
     #   - todoinfra
     deploy:
-      replicas: 2
-      update_config:
-        parallelism: 2
+      replicas: 1
       restart_policy:
         condition: on-failure
       placement:
@@ -34,9 +32,7 @@ services:
     # networks:
     #  - todoinfra
     deploy:
-      replicas: 2
-      update_config:
-        parallelism: 2
+      replicas: 1
       restart_policy:
         condition: on-failure
       placement:
@@ -52,9 +48,7 @@ services:
     # networks:
     #   - todoinfra
     deploy:
-      replicas: 2
-      update_config:
-        parallelism: 2
+      replicas: 1
       restart_policy:
         condition: on-failure
       placement:
@@ -64,7 +58,7 @@ services:
     environment: 
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - ASPNETCORE_ENVIRONMENT=Docker
-      - ConnectionStrings__IdentityProvider=Server=postgres-db,5432;User Id=postgres;Password=dev1234;Database=identityserver
+      - ConnectionStrings__IdentityProvider=Server=postgres-db,5432;User Id=postgres;Password=dev1234;Database=identityserver-prod
       - ElasticConfiguration__Uri=http://elasticsearch:9200
       - ClientSecret=secret
       - ClientId=todoApp
@@ -73,9 +67,7 @@ services:
     # networks:
     #   - todoApp
     deploy:
-      replicas: 2
-      update_config:
-        parallelism: 2
+      replicas: 1
       restart_policy:
         condition: on-failure
       placement:
@@ -87,7 +79,7 @@ services:
     environment: 
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - ASPNETCORE_ENVIRONMENT=Docker
-      - ConnectionStrings__TodoList=Server=postgres-db,5432;User Id=postgres;Password=dev1234;Database=todolist
+      - ConnectionStrings__TodoList=Server=postgres-db,5432;User Id=postgres;Password=dev1234;Database=todolist-prod
       - IdentityServiceUrl=http://identity-svc
       - ElasticConfiguration__Uri=http://elasticsearch:9200
     ports: 
@@ -95,9 +87,7 @@ services:
     # networks:
     #   - todoApp
     deploy:
-      replicas: 2
-      update_config:
-        parallelism: 2
+      replicas: 1
       restart_policy:
         condition: on-failure
       placement:
@@ -123,9 +113,7 @@ services:
     # networks:
     #   - todoApp
     deploy:
-      replicas: 2
-      update_config:
-        parallelism: 2
+      replicas: 1
       restart_policy:
         condition: on-failure
       placement:
@@ -142,4 +130,4 @@ services:
 
 volumes:
   elasticsearch-data:
-  db:
+  db-post:

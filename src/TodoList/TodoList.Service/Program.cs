@@ -20,7 +20,7 @@ Console.WriteLine(builder.Environment.EnvironmentName);
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile($"appsettings.json", false, true)
-    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json",false,true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json",true,true)
     .AddEnvironmentVariables();
 
 SerilogSettingsConfig.ConfigureLogging(builder.Configuration, builder.Environment.EnvironmentName);
